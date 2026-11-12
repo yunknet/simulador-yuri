@@ -1,5 +1,5 @@
 /**
- * Meta Pixel opcional. Defina VITE_META_PIXEL_ID no build para ativar.
+ * Meta Pixel opcional. Defina META_PIXEL_ID no Environment do servidor para ativar.
  * O evento "Contact" do envio ao WhatsApp é disparado em `tracking.ts`.
  */
 export function initMetaPixel(pixelId: string | undefined): void {

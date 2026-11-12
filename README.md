@@ -29,25 +29,26 @@ Para desativar um consultor sem mexer no código: `UPDATE team_members SET is_ac
 
 - UTMs (`utm_*`, `fbclid`, `gclid`…) são salvos ao abrir a página
 - Ao enviar para o WhatsApp: evento `Contact` no Meta Pixel, `click_whatsapp` no GA e `whatsapp_click` no GTM (`dataLayer`)
-- Meta Pixel opcional via `VITE_META_PIXEL_ID` (dispara também o `PageView`)
+- Meta Pixel opcional via `META_PIXEL_ID` no Environment (dispara também o `PageView`)
 
 ## Deploy no Easypanel
 
-1. **Criar o banco** (opcional, recomendado): *+ Service → Postgres*. Copie a *Internal Connection URL*.
-2. **Criar o app**: *+ Service → App* → Source: GitHub `yunknet/simulador-yuri`, branch `main` → Build: **Dockerfile**.
-3. **Environment** do app:
-   ```
-   DATABASE_URL=<Internal Connection URL do Postgres>
-   ```
-4. **Build Args** (opcionais):
-   ```
-   VITE_SITE_URL=https://simulador.seudominio.com.br
-   VITE_META_PIXEL_ID=000000000000000
-   ```
-5. **Domains**: adicione o domínio e aponte para a porta **3000**.
-6. Deploy. As tabelas são criadas automaticamente no primeiro start. Teste em `https://seu-dominio/api/health`.
+Toda a configuração fica na aba **Environment** do app. Não precisa de Build Args.
 
-Para usar o mesmo banco do site principal (rodízio compartilhado), use em `DATABASE_URL` o banco `yurirodizio` já existente.
+1. **Banco** (recomendado): *+ Service → Postgres*. Abra o serviço e copie a **Internal Connection URL**.
+2. **App**: *+ Service → App* → Source: GitHub `yunknet/simulador-yuri`, branch `main` → Build: **Dockerfile**.
+3. Aba **Environment** do app — cole (uma por linha):
+   ```
+   DATABASE_URL=postgres://...   ← a URL copiada no passo 1
+   META_PIXEL_ID=                ← deixe vazio até criar o Pixel
+   ```
+4. Aba **Domains**: adicione o domínio, porta **3000**.
+5. **Deploy**. Teste em `https://seu-dominio/api/health` — deve mostrar `"database":"conectado"`.
+
+Quando criar o Pixel: cole o ID (só números) em `META_PIXEL_ID` e clique em **Deploy** de novo.
+O domínio das prévias de link (WhatsApp/Instagram) é detectado sozinho; para forçar um, use `SITE_URL`.
+
+Para usar o mesmo banco do site principal (fila de rodízio compartilhada), use em `DATABASE_URL` o banco `yurirodizio` já existente.
 
 ## Desenvolvimento
 

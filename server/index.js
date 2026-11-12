@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { migrate, pool } from "./db.js";
@@ -93,9 +94,22 @@ app.use("/assets", express.static(path.join(DIST_DIR, "assets"), { immutable: tr
 app.use("/assets", (_req, res) => res.sendStatus(404));
 app.use(express.static(DIST_DIR, { index: false, maxAge: "1h" }));
 
+// Configuração lida do "Environment" do Easypanel na hora de servir a página
+// (sem precisar de Build Args nem rebuild para trocar o Pixel).
+const META_PIXEL_ID = String(process.env.META_PIXEL_ID ?? "").replace(/\D/g, "");
+let indexTemplate = null;
+
+function renderIndex(req) {
+  indexTemplate ??= fs.readFileSync(path.join(DIST_DIR, "index.html"), "utf8");
+  // Domínio público: SITE_URL, se definido; senão o próprio domínio acessado.
+  const siteUrl = (process.env.SITE_URL || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
+  const config = `<script>window.__APP_CONFIG__=${JSON.stringify({ metaPixelId: META_PIXEL_ID })}</script>`;
+  return indexTemplate.replaceAll("__SITE_URL__", siteUrl).replace("</head>", `${config}</head>`);
+}
+
 // Qualquer outra rota abre o simulador (links de anúncio com UTMs, etc.).
-app.get("*", (_req, res) => {
-  res.set("Cache-Control", "no-cache").sendFile(path.join(DIST_DIR, "index.html"));
+app.get("*", (req, res) => {
+  res.set("Cache-Control", "no-cache").type("html").send(renderIndex(req));
 });
 
 // ==========================================================

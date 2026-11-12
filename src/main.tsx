@@ -7,7 +7,7 @@ import "./index.css";
 
 initUTMTracking();
 trackPageView();
-initMetaPixel(import.meta.env.VITE_META_PIXEL_ID);
+initMetaPixel(window.__APP_CONFIG__?.metaPixelId);
 
 const root = document.getElementById("root");
 
