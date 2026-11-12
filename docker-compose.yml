@@ -1,0 +1,23 @@
+# Ambiente local completo (página + API + PostgreSQL): docker compose up --build
+# Em produção use o Easypanel (ver README).
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://yuri:yuri@db:5432/yurirodizio
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: yuri
+      POSTGRES_PASSWORD: yuri
+      POSTGRES_DB: yurirodizio
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yuri -d yurirodizio"]
+      interval: 3s
+      retries: 10
