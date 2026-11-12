@@ -32,7 +32,7 @@ export function Simulator() {
       sim.next();
       return;
     }
-    if (!sim.canSubmit || sending) return;
+    if (!sim.canSubmit || sending || !sim.type) return;
 
     setSending(true);
     try {
@@ -79,7 +79,13 @@ export function Simulator() {
 
         {sim.step < 3 ? (
           <Button type="submit" size="xl" disabled={!sim.canAdvance} className="flex-1">
-            Próximo <ChevronRight className="h-5 w-5" aria-hidden />
+            {sim.step === 1 && !sim.type ? (
+              "Escolha o tipo acima"
+            ) : (
+              <>
+                Próximo <ChevronRight className="h-5 w-5" aria-hidden />
+              </>
+            )}
           </Button>
         ) : (
           <Button type="submit" variant="whatsapp" size="xl" disabled={!sim.canSubmit || sending} className="flex-1">

@@ -3,7 +3,7 @@ import type { SimulatorState } from "../useSimulator";
 
 export function StepContact({ sim }: { sim: SimulatorState }) {
   const summary = [
-    { label: "Consórcio", value: sim.type.label },
+    { label: "Consórcio", value: sim.type?.label ?? "" },
     { label: "Crédito", value: formatCurrency(sim.credit) },
     { label: "Objetivo", value: sim.objective },
     ...(sim.isImmediateBid ? [{ label: "Lance", value: formatCurrency(sim.bid) }] : []),

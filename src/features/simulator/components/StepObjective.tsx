@@ -9,7 +9,7 @@ export function StepObjective({ sim }: { sim: SimulatorState }) {
     <fieldset>
       <legend className="font-display text-xl font-bold text-foreground sm:text-2xl">Qual é o seu objetivo?</legend>
       <p className="mb-5 mt-1 text-sm font-medium text-muted-foreground">
-        <span className="text-primary">{sim.type.label}</span> · {formatCurrency(sim.credit)}
+        <span className="text-primary">{sim.type?.label}</span> · {formatCurrency(sim.credit)}
       </p>
 
       <div role="radiogroup" aria-label="Objetivo" className="space-y-3">
