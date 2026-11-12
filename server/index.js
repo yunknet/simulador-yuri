@@ -27,6 +27,11 @@ const requireDb = (_req, res, next) => {
   next();
 };
 
+// Liveness do container (usado pelo HEALTHCHECK): só indica que o site está no ar.
+// Não depende do banco — se o banco cair, o site continua com o rodízio local.
+app.get("/healthz", (_req, res) => res.type("text").send("ok"));
+
+// Diagnóstico para humanos: mostra também o estado do banco.
 app.get("/api/health", async (_req, res) => {
   if (!pool) return res.json({ ok: true, database: "não configurado (rodízio local no navegador)" });
   try {
