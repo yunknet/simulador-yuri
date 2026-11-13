@@ -6,8 +6,6 @@ interface ImportMetaEnv {
 }
 
 interface Window {
-  /** Configuração injetada pelo servidor a partir do Environment (ver server/index.js). */
-  __APP_CONFIG__?: { metaPixelId?: string };
   /** Scripts de terceiros que podem existir na página (Meta Pixel, Google Analytics/GTM). */
   fbq?: (...args: unknown[]) => void;
   gtag?: (...args: unknown[]) => void;

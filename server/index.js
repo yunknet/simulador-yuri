@@ -99,17 +99,46 @@ app.use("/assets", express.static(path.join(DIST_DIR, "assets"), { immutable: tr
 app.use("/assets", (_req, res) => res.sendStatus(404));
 app.use(express.static(DIST_DIR, { index: false, maxAge: "1h" }));
 
-// Configuração lida do "Environment" do Easypanel na hora de servir a página
-// (sem precisar de Build Args nem rebuild para trocar o Pixel).
-const META_PIXEL_ID = String(process.env.META_PIXEL_ID ?? "").replace(/\D/g, "");
+// Meta Pixel do Yuri. Pode ser trocado pela variável META_PIXEL_ID no Environment
+// do Easypanel; META_PIXEL_ID=off desativa o Pixel.
+const DEFAULT_META_PIXEL_ID = "1151746657206681";
+const META_PIXEL_ID = String(process.env.META_PIXEL_ID || DEFAULT_META_PIXEL_ID).replace(/\D/g, "");
+
+/** Código oficial do Meta Pixel (PageView), inserido no <head> da página. */
+function metaPixelSnippet(pixelId) {
+  if (!pixelId) return { head: "", body: "" };
+  return {
+    head: `<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${pixelId}');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->`,
+    body: `<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"
+/></noscript>`,
+  };
+}
+
+const pixel = metaPixelSnippet(META_PIXEL_ID);
 let indexTemplate = null;
 
 function renderIndex(req) {
   indexTemplate ??= fs.readFileSync(path.join(DIST_DIR, "index.html"), "utf8");
   // Domínio público: SITE_URL, se definido; senão o próprio domínio acessado.
   const siteUrl = (process.env.SITE_URL || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
-  const config = `<script>window.__APP_CONFIG__=${JSON.stringify({ metaPixelId: META_PIXEL_ID })}</script>`;
-  return indexTemplate.replaceAll("__SITE_URL__", siteUrl).replace("</head>", `${config}</head>`);
+  return indexTemplate
+    .replaceAll("__SITE_URL__", siteUrl)
+    .replace("</head>", `${pixel.head}\n</head>`)
+    .replace("<body>", `<body>\n${pixel.body}`);
 }
 
 // Qualquer outra rota abre o simulador (links de anúncio com UTMs, etc.).

@@ -29,7 +29,7 @@ Para desativar um consultor sem mexer no código: `UPDATE team_members SET is_ac
 
 - UTMs (`utm_*`, `fbclid`, `gclid`…) são salvos ao abrir a página
 - Ao enviar para o WhatsApp: evento `Contact` no Meta Pixel, `click_whatsapp` no GA e `whatsapp_click` no GTM (`dataLayer`)
-- Meta Pixel opcional via `META_PIXEL_ID` no Environment (dispara também o `PageView`)
+- **Meta Pixel `1151746657206681`** já incluído (código oficial no `<head>`, com `PageView`). Para trocar, defina `META_PIXEL_ID` no Environment; `META_PIXEL_ID=off` desativa
 
 ## Deploy no Easypanel
 
@@ -40,12 +40,11 @@ Toda a configuração fica na aba **Environment** do app. Não precisa de Build 
 3. Aba **Environment** do app — cole (uma por linha):
    ```
    DATABASE_URL=postgres://...   ← a URL copiada no passo 1
-   META_PIXEL_ID=                ← deixe vazio até criar o Pixel
    ```
 4. Aba **Domains**: adicione o domínio, porta **3000**.
 5. **Deploy**. Teste em `https://seu-dominio/api/health` — deve mostrar `"database":"conectado"`.
 
-Quando criar o Pixel: cole o ID (só números) em `META_PIXEL_ID` e clique em **Deploy** de novo.
+O Meta Pixel já vem configurado — não precisa de variável.
 O domínio das prévias de link (WhatsApp/Instagram) é detectado sozinho; para forçar um, use `SITE_URL`.
 
 Para usar o mesmo banco do site principal (fila de rodízio compartilhada), use em `DATABASE_URL` o banco `yurirodizio` já existente.
@@ -75,8 +74,7 @@ src/
 ├── lib/
 │   ├── whatsapp.ts           # envio do lead: rastreia, escolhe atendente, abre o WhatsApp
 │   ├── teamRotation.ts       # rodízio (API + fallback local)
-│   ├── tracking.ts           # UTMs, Pixel/GA, redirecionamento compatível com apps
-│   └── pixel.ts              # Meta Pixel opcional
+│   └── tracking.ts           # UTMs, eventos Pixel/GA, redirecionamento compatível com apps
 server/
 ├── index.js                  # Express: /api/team/next, /api/team/dispatch, /api/health + arquivos do site
 └── db.js                     # conexão e criação automática das tabelas
