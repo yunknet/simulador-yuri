@@ -101,7 +101,7 @@ app.use(express.static(DIST_DIR, { index: false, maxAge: "1h" }));
 
 // Meta Pixel do Yuri. Pode ser trocado pela variável META_PIXEL_ID no Environment
 // do Easypanel; META_PIXEL_ID=off desativa o Pixel.
-const DEFAULT_META_PIXEL_ID = "1151746657206681";
+const DEFAULT_META_PIXEL_ID = "1845894369781850";
 const META_PIXEL_ID = String(process.env.META_PIXEL_ID || DEFAULT_META_PIXEL_ID).replace(/\D/g, "");
 
 /** Código oficial do Meta Pixel (PageView), inserido no <head> da página. */

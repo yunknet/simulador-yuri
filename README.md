@@ -29,7 +29,7 @@ Para desativar um consultor sem mexer no código: `UPDATE team_members SET is_ac
 
 - UTMs (`utm_*`, `fbclid`, `gclid`…) são salvos ao abrir a página
 - Ao enviar para o WhatsApp: evento `Contact` no Meta Pixel, `click_whatsapp` no GA e `whatsapp_click` no GTM (`dataLayer`)
-- **Meta Pixel `1151746657206681`** já incluído (código oficial no `<head>`, com `PageView`). Para trocar, defina `META_PIXEL_ID` no Environment; `META_PIXEL_ID=off` desativa
+- **Meta Pixel `1845894369781850`** já incluído (código oficial no `<head>`, com `PageView`). Para trocar, defina `META_PIXEL_ID` no Environment; `META_PIXEL_ID=off` desativa
 
 ## Deploy no Easypanel
 
