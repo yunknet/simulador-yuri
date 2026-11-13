@@ -91,7 +91,11 @@ export function trackWhatsAppClick(buttonLocation: string = "simulador") {
     // 1. Incrementa contador local de cliques
     const clicks = parseInt(localStorage.getItem(CLICKS_STORAGE_KEY) || "0", 10) + 1;
     localStorage.setItem(CLICKS_STORAGE_KEY, clicks.toString());
+  } catch {
+    // Armazenamento bloqueado não deve impedir os eventos de conversão.
+  }
 
+  try {
     // 2. Dispara evento no Meta Pixel (se existir na página)
     if (typeof window.fbq === "function") {
       window.fbq("track", "Contact", {
@@ -115,6 +119,19 @@ export function trackWhatsAppClick(buttonLocation: string = "simulador") {
     }
   } catch {
     // Silencioso
+  }
+}
+
+/** Simulação validada e enviada ao fluxo de WhatsApp; não confirma mensagem recebida. */
+export function trackSimulationLead() {
+  if (typeof window === "undefined") return;
+  try {
+    window.fbq?.("track", "Lead", {
+      content_name: "Simulação concluída",
+      content_category: "simulador",
+    });
+  } catch {
+    // Falhas de analytics nunca bloqueiam o atendimento.
   }
 }
 

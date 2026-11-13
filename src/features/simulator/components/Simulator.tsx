@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ensureTopVisible } from "@/lib/scroll";
 import { sendLeadToWhatsApp } from "@/lib/whatsapp";
+import { trackSimulationLead } from "@/lib/tracking";
 import { buildSimulationMessage } from "../message";
 import { useSimulatorContext } from "../simulator-context";
 import { StepContact } from "./StepContact";
@@ -15,6 +16,7 @@ export function Simulator() {
   const [sending, setSending] = useState(false);
   const cardRef = useRef<HTMLFormElement>(null);
   const isFirstRender = useRef(true);
+  const leadTracked = useRef(false);
 
   // No celular, ao trocar de etapa, garante que o topo do card fique visível.
   useEffect(() => {
@@ -36,6 +38,10 @@ export function Simulator() {
 
     setSending(true);
     try {
+      if (!leadTracked.current) {
+        trackSimulationLead();
+        leadTracked.current = true;
+      }
       await sendLeadToWhatsApp(
         buildSimulationMessage({
           typeId: sim.type.id,
